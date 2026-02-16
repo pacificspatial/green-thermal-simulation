@@ -1,0 +1,22 @@
+{
+  "version":8,
+  "glyphs": "/glyphs/{fontstack}/{range}.pbf",
+  "sources":{
+    "gaiku-style-source":{
+      "type":"raster",
+      "tiles":[
+        "https://api.mapbox.com/styles/v1/pacificspatial/ckwv1ijut1z4i15ldi8xot35b/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicGFjaWZpY3NwYXRpYWwiLCJhIjoiY2p1amlzYTVkMWh6NTN5bnF3cXZwa3F5YyJ9.3_50pwnF9CBMFhddvpE9-g"
+      ],
+      "tileSize":256,
+      "maxzoom":21
+    }
+  },
+  "layers":[
+    {
+      "id":"gaiku-style-layer",
+      "type":"raster",
+      "source":"gaiku-style-source",
+      "minzoom":0
+    }
+  ]
+}

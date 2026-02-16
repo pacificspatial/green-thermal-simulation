@@ -1,0 +1,30 @@
+{
+  "version":8,
+  "glyphs": "/glyphs/{fontstack}/{range}.pbf",
+  "sources":{
+    "chiri-style-source":{
+      "type":"raster",
+      "tiles":[
+        "https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg"
+      ],
+      "tileSize":256,
+      "minzoom":2,
+      "maxzoom":18
+    }
+  },
+  "layers":[
+    {
+      "id":"background",
+      "type":"background",
+      "paint":{
+        "background-color":"#FFF9E8"
+      }
+    },
+    {
+      "id":"chiri-style-layer",
+      "type":"raster",
+      "source":"chiri-style-source",
+      "minzoom":0
+    }
+  ]
+}

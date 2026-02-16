@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2024",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowJs": true,
+    "checkJs": false,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": false,
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "paths": {
+      "@_src/*": ["./src/*"],
+      "@_views/*": ["./src/views/*"],
+      "@_components/*": ["./src/components/*"],
+      "@_resources/*": ["./src/resources/*"],
+      "@_manager/*": ["./src/manager/*"],
+      "@_map/*": ["./src/map/*"],
+      "@team4am/fp-core": ["./src/core/*"],
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "bin"]
+}

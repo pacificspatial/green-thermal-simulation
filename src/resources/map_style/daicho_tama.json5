@@ -1,0 +1,29 @@
+{
+  "version":8,
+  "glyphs": "/glyphs/{fontstack}/{range}.pbf",
+  "sources":{
+    "daicho-style-source":{
+      "type":"raster",
+      "tiles":[
+        "{{API_ENDPOINT}}/tile/daicho/merged-tama2/{z}/{x}/{y}.png"
+      ],
+      "tileSize":256,
+      "maxzoom":20
+    }
+  },
+  "layers":[
+    {
+      "id":"background",
+      "type":"background",
+      "paint":{
+        "background-color":"#FFF9E8"
+      }
+    },
+    {
+      "id":"daicho-style-layer",
+      "type":"raster",
+      "source":"daicho-style-source",
+      "minzoom":0
+    }
+  ]
+}
