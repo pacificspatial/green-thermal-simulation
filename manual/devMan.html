@@ -80,10 +80,14 @@
 <h1 id="環境構築手順書">環境構築手順書</h1>
 
 <h1 id="1-本書について">1 本書について</h1>
-<p>本書では、カーボンニュートラル施策推進支援システム（以下「本システム」という。）の利用環境構築手順について記載しています。本システムの構成や仕様の詳細については以下も参考にしてください。</p>
-<p><a href="https://www.mlit.go.jp/plateau/file/libraries/doc/plateau_tech_doc_0030_ver01.pdf">技術検証レポート</a></p>
+<p>本書では、温熱環境シミュレーション機能（以下「本システム」という。）の利用環境構築手順について記載しています。本システムは、PLATEAUの3D都市モデルおよび樹木データを活用し、任意の環境条件下における気温・湿度・WBGT（暑さ指数）等の温熱環境を数値流体計算（CFD）によりシミュレートするWebアプリケーションです。バックエンドの計算エンジンとして OpenFOAM v2506 を使用し、植生キャノピーモデル（<code>canopyModels_v2506</code>）により樹木の気流・熱への影響を再現します。</p>
+<p>本システムの構成や仕様の詳細については以下も参考にしてください。</p>
+<ul>
+<li><a href="https://www.mlit.go.jp/plateau/file/libraries/doc/*****">技術検証レポート</a></li>
+<li><a href="https://www.mlit.go.jp/plateau/use-case/uc24-17/">PLATEAU Use case「樹木データを活用した温熱環境シミュレータの開発」</a></li>
+</ul>
 <h1 id="2-動作環境">2 動作環境</h1>
-<p>本システムの動作環境は以下のとおりです。</p>
+<p>本システムのWebアプリケーションサーバサイドの動作環境は以下のとおりです。</p>
 <table>
 <thead>
 <tr>
@@ -95,239 +99,665 @@
 <tbody>
 <tr>
 <td>OS</td>
-<td>Microsoft Windows 10 または 11</td>
+<td>Microsoft Windows 10 以上　または macOS 12 Monterey 以上</td>
 <td>同左</td>
 </tr>
 <tr>
 <td>CPU</td>
-<td>Intel Core i3以上</td>
-<td>Intel Core i5以上</td>
-</tr>
-<tr>
-<td>メモリ</td>
-<td>4GB以上</td>
-<td>8GB以上</td>
-</tr>
-<tr>
-<td>ディスプレイ解像度</td>
-<td>1024×768以上</td>
+<td>Pentium 4 以上</td>
 <td>同左</td>
 </tr>
 <tr>
-<td>ネットワーク</td>
-<td>【解析・シミュレーション】<br>不要<br><br>【集計・適地判定】<br>範囲選択機能を使用しない場合はネットワーク環境は不要<br>範囲選択機能を使用する場合、以下のURLを閲覧できる環境が必要<br>・地理院地図（国土地理院）　<br>http://cyberjapandata.gsi.go.jp<br>・地図表示のため標準地図<br>https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png</td>
+<td>メモリ</td>
+<td>8GB以上</td>
 <td>同左</td>
 </tr>
 </tbody>
 </table>
-<h1 id="3-インストール手順">3 インストール手順</h1>
-<p><a href="https://github.com/Project-PLATEAU/UC22-013-SolarPotential/releases/">こちら</a>
-からアプリケーションをダウンロードします。</p>
-<p>ダウンロード後、zipファイルを右クリックし、「すべて展開」を選択することで、zipファイルを展開します。</p>
-<p>展開されたフォルダ内の「SolarPotential.exe」をダブルクリックすることで、アプリケーションが起動します。</p>
-<p><img src="../resources/userMan/tutorial_028.png" alt=""></p>
-<h1 id="4-ビルド手順">4 ビルド手順</h1>
-<p>自身でソースファイルをダウンロードしビルドを行うことで、実行ファイルを生成することができます。<br>
-ソースファイルは
-<a href="https://github.com/Project-PLATEAU/UC22-013-SolarPotential/">こちら</a>
-からダウンロード可能です。</p>
-<p>GitHubからダウンロードしたソースファイルの構成は以下のようになっています。</p>
-<p><img src="../resources/devMan/tutorial_028.png" alt=""></p>
-<p>（1）本システムのソリューションファイル（SolarPotential.sln）をVisualStudio2019で開きます。</p>
-<p>ソリューションファイルはSRC\EXE\SolarPotential-CS\SolarPotentialに格納されています。</p>
-<p>（2）SolarPotential.slnをVisualStudio2019で開くと、ソリューション'SolarPotential'に6つのプロジェクトが表示されます。</p>
-<p>以下の赤枠部分のように、ソリューション構成を【Release】に、ソリューションプラットフォームを【x64】に設定します。</p>
-<p><img src="../resources/devMan/tutorial_029.png" alt=""></p>
-<p>（3）以下の赤枠部分のように、[ソリューションのビルド]を選択し、ソリューション全体をビルドします。</p>
-<p><img src="../resources/devMan/tutorial_030.png" alt=""></p>
-<p>（4）ビルドが正常に終了すると、ソリューションファイルと同じフォルダにあるbin\Releaseフォルダに実行ファイルが生成されます。</p>
-<p><img src="../resources/devMan/tutorial_031.png" alt=""></p>
-<p>※ダウンロードしたソリューションをビルドする際に、ビルドエラーとなり、次のメッセージが出力されるケースがあります。</p>
-<p>「（ファイル名）を処理できませんでした。インターネットまたは制限付きゾーン内にあるか、ファイルに
-Web のマークがあるためです。これらのファイルを処理するには、Web
-のマークを削除してください。」</p>
-<p>この場合は該当するファイルのプロパティを開き、全般タブ内の「セキュリティ」の項目について[許可する]にチェックを入れてください。</p>
-<p><img src="../resources/devMan/tutorial_032.png" alt=""></p>
-<p>【参考】</p>
-<p>ソースファイルの構成と機能は以下のようになっています。コードを修正する際の参考としてください。</p>
-<p><img src="../resources/devMan/tutorial_033.png" alt=""></p>
-<h1 id="5-準備物一覧">5 準備物一覧</h1>
-<p>アプリケーションを利用するために以下のデータを入手します。</p>
+<p>OpenFOAM シミュレーション計算サーバの動作環境は以下のとおりです。</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th>データ種別</th>
-<th>機能</th>
-<th>用途</th>
-<th>入力方法</th>
+<th>項目</th>
+<th>動作環境</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>①</td>
-<td>3D都市モデル(CityGML)G空間情報センターから取得します。<br> <a href="https://front.geospatial.jp/">https://front.geospatial.jp/</a></td>
-<td>全般</td>
-<td>全般</td>
-<td>格納フォルダパス指定</td>
+<td>OS</td>
+<td>Linux 64bit</td>
 </tr>
 <tr>
-<td>②</td>
-<td>月毎の可照時間国立天文台 こよみの計算Webページから取得します。<br> <a href="https://eco.mtk.nao.ac.jp/cgi-bin/koyomi/koyomix.cgi">https://eco.mtk.nao.ac.jp/cgi-bin/koyomi/koyomix.cgi</a></td>
-<td>発電ポテンシャル推計</td>
-<td>日射量の推計</td>
-<td>CSVファイルを手動作成しファイルパス指定</td>
-</tr>
-<tr>
-<td>③</td>
-<td>毎月の平均日照時間気象庁 過去の気象データ・ダウンロードから取得します。<br> <a href="https://www.data.jma.go.jp/gmd/risk/obsdl/index.php">https://www.data.jma.go.jp/gmd/risk/obsdl/index.php</a></td>
-<td>発電ポテンシャル推計</td>
-<td>日射量の推計</td>
-<td>CSVファイルをダウンロードしファイルパス指定</td>
-</tr>
-<tr>
-<td>④</td>
-<td>月毎の積雪深NEDO 日射量データベース閲覧システム METPV-20から取得します。<br> <a href="https://appww2.infoc.nedo.go.jp/appww/index.html">https://appww2.infoc.nedo.go.jp/appww/index.html</a></td>
-<td>発電ポテンシャル推計</td>
-<td>日射量の推計</td>
-<td>CSVファイルを手動作成しファイルパス指定</td>
-</tr>
-<tr>
-<td>⑤</td>
-<td>3D都市モデル(DEMデータ)G空間情報センターから取得します。<br> <a href="https://front.geospatial.jp/">https://front.geospatial.jp/</a></td>
-<td>発電ポテンシャル推計</td>
-<td>日射量の推計</td>
-<td>格納フォルダパス指定</td>
-</tr>
-<tr>
-<td>⑥</td>
-<td>制限区域データ（シェープファイル）<br>（加賀市　景観整備区域・石川県　石川県眺望計画）</td>
-<td>パネル設置適地判定</td>
-<td>パネル設置適地判定</td>
-<td>シェープファイルパス指定</td>
-</tr>
-<tr>
-<td>⑦</td>
-<td>気象関連データ（積雪）(国土数値情報の平年値（気候）メッシュ)</td>
-<td>パネル設置適地判定</td>
-<td>パネル設置適地判定</td>
-<td>シェープファイルをダウンロードしファイルパス指定</td>
+<td>ソフトウェア</td>
+<td>OpenFOAM v2506</td>
 </tr>
 </tbody>
 </table>
-<p>本システムでは、3D都市モデルの建築物モデルの形状（LOD1、LOD2）と属性を活用します。</p>
-<p>地形を考慮した解析を行う場合は、地形（LOD1）も活用してください。</p>
+<p>クライアント（ブラウザ）の動作環境は以下のとおりです。</p>
 <table>
 <thead>
 <tr>
-<th>地物</th>
-<th>地物型</th>
-<th>属性区分</th>
-<th>属性名</th>
+<th>項目</th>
+<th>動作環境</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ブラウザ</td>
+<td>Google Chrome 最新版</td>
+</tr>
+</tbody>
+</table>
+<p>本システムで使用するソフトウェアおよびサービスの一覧は以下のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>名称</th>
+<th>バージョン</th>
 <th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>建築物LOD2</td>
-<td>bldg:Building</td>
-<td>空間属性</td>
-<td>bldg:RoofSurface</td>
-<td>建築物のLOD2の屋根面</td>
+<td>オープンソースソフトウェア</td>
+<td><a href="https://httpd.apache.org/">Apache HTTP Server</a></td>
+<td>2.4.58</td>
+<td>Webアプリを配信するためのWebサーバ</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td>bldg:WallSurface</td>
-<td>建築物のLOD2の壁面</td>
+<td>オープンソースソフトウェア</td>
+<td><a href="https://github.com/postgis/postgis">PostGIS</a></td>
+<td>3.4.1</td>
+<td>PostgreSQL で位置情報を扱うための拡張機能</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td>主題属性</td>
-<td>bldg:measuredHeight</td>
-<td>計測高さ</td>
+<td>オープンソースソフトウェア</td>
+<td><a href="https://www.openfoam.com/">OpenFOAM</a></td>
+<td>v2506</td>
+<td>数値流体計算（CFD）エンジン。温熱環境シミュレーションの中核</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td>uro:buildingDisasterRiskAttribute</td>
-<td>災害リスク</td>
+<td>オープンソースRDBMS</td>
+<td><a href="https://github.com/postgres/postgres">PostgreSQL</a></td>
+<td>16.2</td>
+<td>各種データを格納するリレーショナルデータベース</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td>uro:buildingID</td>
-<td>建物ID</td>
+<td>オープンソースライブラリ</td>
+<td><a href="https://github.com/facebook/react">React.js</a></td>
+<td>19.x</td>
+<td>UIを構築するためのJavaScriptライブラリ</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td>uro:buildingStructureType</td>
-<td>構造種別</td>
+<td>オープンソースライブラリ</td>
+<td><a href="https://github.com/maplibre/maplibre-gl-js">MapLibre GL JS</a></td>
+<td>5.x</td>
+<td>地図表示ライブラリ</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td>uro:buildingStructureOrgType</td>
-<td>構造種別（独自）</td>
+<td>オープンソースライブラリ</td>
+<td><a href="https://github.com/CesiumGS/cesium">CesiumJS</a></td>
+<td>1.136</td>
+<td>3Dビューア用ライブラリ</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td>uro:BuildingRiverFloodingRiskAttribute</td>
-<td>洪水浸水リスク</td>
+<td>オープンソースライブラリ</td>
+<td><a href="https://mui.com/">MUI（Material UI）</a></td>
+<td>7.x</td>
+<td>UIコンポーネントライブラリ</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td>uro:depth</td>
-<td>浸水深</td>
+<td>クラウドサービス</td>
+<td><a href="https://firebase.google.com/">Firebase</a></td>
+<td>12.x</td>
+<td>認証機能（Firebase Authentication）を提供</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td>uro:BuildingTsunamiRiskAttribute</td>
-<td>津波浸水リスク</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td>uro:depth</td>
-<td>浸水深</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td>uro:BuildingLandSlideRiskAttribute</td>
-<td>土砂災害リスク</td>
-</tr>
-<tr>
-<td>建築物LOD1</td>
-<td>bldg:Building</td>
-<td>空間属性</td>
-<td>bldg:lod1Solid</td>
-<td>建築物のLOD1の立体</td>
-</tr>
-<tr>
-<td>地形LOD1</td>
-<td>dem:ReliefFeature</td>
-<td>空間属性</td>
-<td>dem:tin</td>
-<td>地形LOD1の面</td>
+<td>商用クラウド</td>
+<td><a href="https://cesium.com/platform/cesium-ion/">Cesium ion</a></td>
+<td>-</td>
+<td>3Dデータの変換と配信サービス</td>
 </tr>
 </tbody>
 </table>
+<h1 id="3-事前準備">3 事前準備</h1>
+<p>本システムで利用する下記のソフトウェア・サービスを準備します。</p>
+<h2 id="1データベースの準備">（1）データベースの準備</h2>
+<p><a href="https://github.com/postgres/postgres">PostgreSQL</a> を使ってPostgreSQLサーバを起動します。その上で、位置情報を扱うための拡張機能である <a href="https://github.com/postgis/postgis">PostGIS</a> をインストールします。</p>
+<pre><code class="lang-sql">-- PostGIS の有効化
+CREATE EXTENSION IF NOT EXISTS postgis;
+</code></pre>
+<h2 id="2webサーバの準備">（2）Webサーバの準備</h2>
+<p><a href="https://httpd.apache.org/">Apache HTTP Server</a> を使ってWebサーバを起動します。ビルド済みのフロントエンド資材を配信するためのドキュメントルートを設定してください。</p>
+<h2 id="3nodejs-の準備">（3）Node.js の準備</h2>
+<p>フロントエンドのビルドには Node.js が必要です。<a href="https://nodejs.org/">Node.js 公式サイト</a>より、LTS版（v20以上）をインストールしてください。</p>
+<pre><code class="lang-bash"># バージョン確認
+node -v   # v20.x.x 以上であることを確認
+npm -v
+</code></pre>
+<h2 id="4firebase-プロジェクトの準備">（4）Firebase プロジェクトの準備</h2>
+<ol>
+<li><a href="https://console.firebase.google.com/">Firebase コンソール</a>で新規プロジェクトを作成します。</li>
+<li><strong>Authentication</strong> を有効化し、<strong>メール/パスワード</strong> 認証プロバイダを有効にします。</li>
+<li>プロジェクトの設定画面から以下の値を控えます。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>環境変数名</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VITE_FIREBASE_API_KEY</code></td>
+<td>Firebase API キー</td>
+</tr>
+<tr>
+<td><code>VITE_FIREBASE_AUTH_DOMAIN</code></td>
+<td>Firebase Auth ドメイン</td>
+</tr>
+<tr>
+<td><code>VITE_FIREBASE_PROJECT_ID</code></td>
+<td>Firebase プロジェクト ID</td>
+</tr>
+<tr>
+<td><code>VITE_FIREBASE_STORAGE_BUCKET</code></td>
+<td>Firebase Storage バケット</td>
+</tr>
+<tr>
+<td><code>VITE_FIREBASE_APP_ID</code></td>
+<td>Firebase アプリ ID</td>
+</tr>
+<tr>
+<td><code>VITE_FIREBASE_MEASUREMENT_ID</code></td>
+<td>Firebase 計測 ID</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5cesium-ion-の準備">（5）Cesium ion の準備</h2>
+<p>3D都市モデル（3DTiles）を配信するために <a href="https://cesium.com/platform/cesium-ion/">Cesium ion</a> のアカウントを取得し、以下の手順を実施します。</p>
+<ol>
+<li>Cesium ion にサインインし、3D都市モデルデータ（建物・樹木等）をアップロードします。</li>
+<li>タイル変換処理が完了したら、アセットIDとアクセストークンを控えます。</li>
+</ol>
+<h2 id="6openfoam-のインストール">（6）OpenFOAM のインストール</h2>
+<p>シミュレーション計算サーバ（Linux 64bit）に OpenFOAM v2506 をインストールします。インストール手順は公式サイトを参照してください。</p>
+<p><a href="https://www.openfoam.com/news/main-news/openfoam-v2506">https://www.openfoam.com/news/main-news/openfoam-v2506</a></p>
+<p>インストール後、OpenFOAM の環境変数を読み込みます。</p>
+<pre><code class="lang-bash">source /usr/lib/openfoam/openfoam2506/etc/bashrc
+</code></pre>
+<p>インストール先によってパスは異なります。<code>foamVersion</code> コマンドでバージョンを確認してください。</p>
+<pre><code class="lang-bash">foamVersion   # OpenFOAM-v2506 と表示されることを確認
+</code></pre>
+<h1 id="4-インストール手順">4 インストール手順</h1>
+<h2 id="1リポジトリの取得">（1）リポジトリの取得</h2>
+<p><a href="https://github.com/Project-PLATEAU/green-thermal-simulation">こちら</a> から温熱環境シミュレーション機能のソースコードをクローンします。</p>
+<pre><code class="lang-bash">git clone https://github.com/Project-PLATEAU/green-thermal-simulation.git
+cd green-thermal-simulation
+</code></pre>
+<h2 id="2環境変数の設定">（2）環境変数の設定</h2>
+<p>プロジェクトルート直下に <code>.env</code> ファイルを作成し、以下の環境変数を設定します。</p>
+<pre><code class="lang-dotenv"># アプリケーション名（任意）
+VITE_APP_NAME=thermal_env
+
+# バックエンドAPIのエンドポイント
+VITE_API_ENDPOINT=https://&lt;サーバのホスト名またはIPアドレス&gt;/api
+
+# Firebase 認証情報（3事前準備（4）で控えた値を設定）
+VITE_FIREBASE_API_KEY=&lt;FirebaseのapiKey&gt;
+VITE_FIREBASE_AUTH_DOMAIN=&lt;FirebaseのauthDomain&gt;
+VITE_FIREBASE_PROJECT_ID=&lt;FirebaseのprojectId&gt;
+VITE_FIREBASE_STORAGE_BUCKET=&lt;FirebaseのstorageBucket&gt;
+VITE_FIREBASE_APP_ID=&lt;FirebaseのappId&gt;
+VITE_FIREBASE_MEASUREMENT_ID=&lt;FirebaseのmeasurementId&gt;
+
+# Cesium ion アクセストークン（3事前準備（5）で控えた値を設定）
+VITE_CESIUM_ION_TOKEN=&lt;Cesium ionのアクセストークン&gt;
+
+# Cesium ion アセットID（建物・樹木等の3DTilesアセットID）
+VITE_CESIUM_ASSET_ID=&lt;アセットID&gt;
+
+# データ暗号化キー（任意。設定するとAPIリクエストデータを暗号化）
+# VITE_ENCRYPTION_KEY=&lt;任意の文字列&gt;
+</code></pre>
+<h2 id="3依存ライブラリのインストール">（3）依存ライブラリのインストール</h2>
+<pre><code class="lang-bash">npm install
+</code></pre>
+<p><code>postinstall</code> スクリプトにより、以下の処理が自動的に実行されます。</p>
+<ul>
+<li><code>src/resources</code> を <code>public/resources</code> へコピー</li>
+<li><code>node_modules/cesium/Build/Cesium</code> を <code>src/cesium</code> および <code>public/cesium</code> へコピー</li>
+</ul>
+<h2 id="4ビルド本番環境">（4）ビルド（本番環境）</h2>
+<pre><code class="lang-bash">npm run build
+</code></pre>
+<p>ビルド成果物は <code>dist</code> ディレクトリに出力されます。</p>
+<h2 id="5webサーバへの配置">（5）Webサーバへの配置</h2>
+<p><code>dist</code> ディレクトリの内容を、3（2）で準備したWebサーバのドキュメントルートに配置します。</p>
+<pre><code class="lang-bash"># 例：Apache のドキュメントルートへコピー
+cp -r dist/* /var/www/html/
+</code></pre>
+<p>SPA（シングルページアプリケーション）のため、すべてのリクエストを <code>index.html</code> にフォールバックするよう Apache の設定を行います。</p>
+<pre><code class="lang-apache">&lt;Directory /var/www/html&gt;
+    Options -Indexes
+    AllowOverride All
+&lt;/Directory&gt;
+</code></pre>
+<p><code>.htaccess</code> をドキュメントルートに配置します。</p>
+<pre><code class="lang-apache">&lt;IfModule mod_rewrite.c&gt;
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule ^index\.html$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.html [L]
+&lt;/IfModule&gt;
+</code></pre>
+<h2 id="6開発サーバの起動開発時のみ">（6）開発サーバの起動（開発時のみ）</h2>
+<p>本番環境へのデプロイではなく、ローカル開発環境での動作確認を行う場合は以下のコマンドを実行します。</p>
+<pre><code class="lang-bash">npm run dev
+</code></pre>
+<p>デフォルトでは <code>http://localhost:5173</code> でアプリケーションが起動します。開発モードでは自動的にデバッグモード（<code>--mode=debug</code>）が有効になります。</p>
+<h1 id="5-openfoam-植生キャノピーモデルの構築">5 OpenFOAM 植生キャノピーモデルの構築</h1>
+<p>本システムのシミュレーション計算には、OpenFOAM 標準ソルバー <code>buoyantBoussinesqSimpleFoam</code>（浮力を考慮した非圧縮性定常 RANS 計算）に、植生キャノピーモデル（<code>canopyModels_v2506</code>）を追加した環境が必要です。キャノピーモデルは運動量・温度・乱流エネルギー・乱流エネルギー消散率の各方程式に樹木（植生）の影響を表すソース項を加えるライブラリです。</p>
+<p>OpenFOAM 計算サーバ（Linux 64bit）で以下の手順を実施してください。</p>
+<h2 id="1キャノピーモデルのコンパイル">（1）キャノピーモデルのコンパイル</h2>
+<p>リポジトリに同梱されている <code>canopyModels_v2506_tar.gz</code> を展開し、OpenFOAM の wmake でコンパイルします。</p>
+<pre><code class="lang-bash"># OpenFOAM 環境の読み込み（インストール先に応じてパスを変更）
+source /usr/lib/openfoam/openfoam2506/etc/bashrc
+
+# アーカイブの展開
+tar xzf canopyModels_v2506_tar.gz
+cd canopyModels_v2506
+
+# クリーンビルド
+wclean
+wmake -libso
+</code></pre>
+<p>コンパイルが成功すると、<code>$FOAM_USER_LIBBIN/libpreFlowModels.so</code> が生成されます。</p>
+<p>コンパイルされるソースの構成は以下のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>ソースファイル</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fvOptions/atmPlantCanopyKSourceB</code></td>
+<td>乱流エネルギー k のソース項（B案）</td>
+</tr>
+<tr>
+<td><code>fvOptions/atmPlantCanopyTurbSourceB</code></td>
+<td>乱流エネルギー消散率 ε のソース項（B案）</td>
+</tr>
+<tr>
+<td><code>fvOptions/atmPlantCanopyKSourceD</code></td>
+<td>乱流エネルギー k のソース項（D案）</td>
+</tr>
+<tr>
+<td><code>fvOptions/atmPlantCanopyTurbSourceD</code></td>
+<td>乱流エネルギー消散率 ε のソース項（D案）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2計算ケースへのライブラリの組み込み">（2）計算ケースへのライブラリの組み込み</h2>
+<p>計算ケースの <code>case/system/controlDict</code> に以下の1行を追加してライブラリを読み込みます。</p>
+<pre><code class="lang-c++">libs (&quot;libpreFlowModels.so&quot;);
+</code></pre>
+<h2 id="3fvoptions-による計算条件の設定">（3）fvOptions による計算条件の設定</h2>
+<p>計算ケースの <code>case/constant/fvOptions</code> に植生キャノピーモデルのソース項を設定します。各ソース項の役割と主なパラメータは以下のとおりです。</p>
+<pre><code class="lang-c++">atmPlantCanopyUSource1   // 運動量式 U へのソース項
+{
+    type        atmPlantCanopyUSource;
+    selectionMode all;
+}
+
+atmPlantCanopyTSource1   // エネルギー式（温度 T）へのソース項
+{
+    type        atmPlantCanopyTSource;
+    selectionMode all;
+    Cp0         1005.0;   // 比熱 [J/(kg·K)]
+}
+
+atmPlantCanopyTurbSource1  // 乱流エネルギー消散率 ε へのソース項
+{
+    type        atmPlantCanopyTurbSourceB;
+    selectionMode all;
+    rho         rho;
+    Cpe1        1.95;     // モデル係数（標準値 1.5〜1.8）
+}
+
+atmPlantCanopyKSource1   // 乱流エネルギー k へのソース項
+{
+    type        atmPlantCanopyKSourceB;
+    selectionMode all;
+    rho         rho;
+}
+</code></pre>
+<p>各ソース項で使用される主なモデルパラメータは以下のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ</th>
+<th>記号</th>
+<th>単位</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>葉面積密度</td>
+<td>LAD</td>
+<td>1/m</td>
+<td>単位体積あたりの葉面積</td>
+</tr>
+<tr>
+<td>植生抵抗係数</td>
+<td>Cd</td>
+<td>-</td>
+<td>樹木キャノピー抵抗係数</td>
+</tr>
+<tr>
+<td>比熱</td>
+<td>Cp0</td>
+<td>J/(kg·K)</td>
+<td>空気の比熱（標準値：1005.0）</td>
+</tr>
+<tr>
+<td>樹高ベース熱流束</td>
+<td>qh</td>
+<td>W/m²</td>
+<td>樹高に基づく単位面積あたりの熱流束</td>
+</tr>
+<tr>
+<td>モデル係数</td>
+<td>Cpe1</td>
+<td>-</td>
+<td>ε ソース項のモデル係数（標準値：1.95）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4シミュレーションの実行">（4）シミュレーションの実行</h2>
+<h3 id="シングルコア実行">シングルコア実行</h3>
+<pre><code class="lang-bash">buoyantBoussinesqSimpleFoam | tee log
+</code></pre>
+<h3 id="並列実行例8コア">並列実行（例：8コア）</h3>
+<pre><code class="lang-bash">decomposePar
+mpirun -np 8 buoyantBoussinesqSimpleFoam -parallel | tee log
+reconstructPar
+</code></pre>
+<p>1回のシミュレーション実行には数時間程度を要します。計算完了後、バックエンドAPIが結果を読み取り、フロントエンドのレポート画面に反映します。</p>
+<h1 id="6-バックエンドapiの構築">6 バックエンドAPIの構築</h1>
+<p>本システムのフロントエンドは、バックエンドAPIと連携して動作します。バックエンドAPIはPostgreSQLデータベースに接続し、シミュレーションプロジェクトの管理およびOpenFOAM計算処理のトリガーを担います。</p>
+<h2 id="1データベースの作成">（1）データベースの作成</h2>
+<p>PostgreSQLに接続し、本システム用のデータベースを作成します。</p>
+<pre><code class="lang-sql">CREATE DATABASE green_thermal_simulation ENCODING 'UTF8';
+\c green_thermal_simulation
+CREATE EXTENSION IF NOT EXISTS postgis;
+</code></pre>
+<h2 id="2テーブルの作成">（2）テーブルの作成</h2>
+<p>シミュレーションプロジェクトの主要なデータ項目は以下のとおりです。バックエンドAPIの実装に合わせてテーブルを作成してください。</p>
+<table>
+<thead>
+<tr>
+<th>属性項目</th>
+<th>フィールド名</th>
+<th>データ型</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内部ID</td>
+<td>id</td>
+<td>integer</td>
+<td>主キー</td>
+</tr>
+<tr>
+<td>プロジェクトUID</td>
+<td>uid</td>
+<td>text</td>
+<td>ユニーク識別子</td>
+</tr>
+<tr>
+<td>プロジェクト名</td>
+<td>name</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>解析対象領域</td>
+<td>the_geom</td>
+<td>geometry(Polygon, 4326)</td>
+<td>PostGIS。ユーザが地図上で指定したポリゴン</td>
+</tr>
+<tr>
+<td>気温 (°C)</td>
+<td>temperature</td>
+<td>float</td>
+<td></td>
+</tr>
+<tr>
+<td>湿度 (%)</td>
+<td>humidity</td>
+<td>float</td>
+<td></td>
+</tr>
+<tr>
+<td>風速 (m/s)</td>
+<td>wind_speed</td>
+<td>float</td>
+<td></td>
+</tr>
+<tr>
+<td>風向き (度)</td>
+<td>wind_direction</td>
+<td>integer</td>
+<td>0:北 / 90:東 / 180:南 / 270:西</td>
+</tr>
+<tr>
+<td>ビル壁面温度 (°C)</td>
+<td>building_wall_temperature</td>
+<td>float</td>
+<td></td>
+</tr>
+<tr>
+<td>地面温度 (°C)</td>
+<td>ground_temperature</td>
+<td>float</td>
+<td></td>
+</tr>
+<tr>
+<td>道路温度 (°C)</td>
+<td>road_temperature</td>
+<td>float</td>
+<td></td>
+</tr>
+<tr>
+<td>水面温度 (°C)</td>
+<td>water_surface_temperature</td>
+<td>float</td>
+<td></td>
+</tr>
+<tr>
+<td>カメラ位置</td>
+<td>camera_position</td>
+<td>jsonb</td>
+<td>Cesiumビューアのカメラ位置・姿勢</td>
+</tr>
+<tr>
+<td>処理ステータス</td>
+<td>process_status</td>
+<td>text</td>
+<td>waiting / processing / done</td>
+</tr>
+<tr>
+<td>処理開始日時</td>
+<td>process_start_at</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>処理終了日時</td>
+<td>process_end_at</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>作成日時</td>
+<td>created_at</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>作成日時 (UNIX)</td>
+<td>created_at_unix</td>
+<td>bigint</td>
+<td></td>
+</tr>
+<tr>
+<td>更新日時</td>
+<td>updated_at</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>更新日時 (UNIX)</td>
+<td>updated_at_unix</td>
+<td>bigint</td>
+<td></td>
+</tr>
+<tr>
+<td>作成ユーザUID</td>
+<td>created_user_uid</td>
+<td>text</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>シミュレーション結果（地面温度・高さ1.2m気温・高さ1.2m湿度・WBGT等）を格納するテーブルについては、バックエンドAPIの仕様に合わせて追加のテーブルを作成してください。</p>
+<h2 id="3apiエンドポイント">（3）APIエンドポイント</h2>
+<p>フロントエンドが利用する主要なAPIエンドポイントは以下のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>エンドポイント</th>
+<th>メソッド</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>system/env</code></td>
+<td>GET</td>
+<td>システム環境設定の取得</td>
+</tr>
+<tr>
+<td><code>system/column_defs</code></td>
+<td>GET</td>
+<td>列定義情報の取得</td>
+</tr>
+<tr>
+<td><code>user</code></td>
+<td>GET</td>
+<td>ログインユーザ情報の取得</td>
+</tr>
+<tr>
+<td><code>thermal_env</code></td>
+<td>GET</td>
+<td>シミュレーションプロジェクト一覧の取得</td>
+</tr>
+<tr>
+<td><code>thermal_env</code></td>
+<td>POST</td>
+<td>シミュレーションプロジェクトの新規作成</td>
+</tr>
+<tr>
+<td><code>thermal_env</code></td>
+<td>PUT</td>
+<td>シミュレーションプロジェクトの更新</td>
+</tr>
+<tr>
+<td><code>thermal_env/process</code></td>
+<td>PUT</td>
+<td>OpenFOAM シミュレーション実行のリクエスト</td>
+</tr>
+</tbody>
+</table>
+<h1 id="7-初期データの投入">7 初期データの投入</h1>
+<p>本システムの稼働に必要なデータを投入します。</p>
+<h2 id="13d都市モデルデータの登録cesium-ion">（1）3D都市モデルデータの登録（Cesium ion）</h2>
+<p>3D都市モデル（建物モデル・樹木モデル等）を Cesium ion にアップロードし、配信の準備を行います。</p>
+<ol>
+<li>Cesium ion の管理コンソールにアクセスします。</li>
+<li>対象データ（CityGML、3DTiles等）をアップロードし、タイル変換処理を実行します。</li>
+<li>生成されたアセットIDを控え、<code>.env</code> の <code>VITE_CESIUM_ASSET_ID</code> に反映します。</li>
+</ol>
+<h2 id="2ユーザの登録">（2）ユーザの登録</h2>
+<p>本システムはFirebase Authentication でユーザ認証を行います。初期ユーザの登録はバックエンドAPI のユーザ管理機能、またはFirebase コンソールから実施してください。</p>
+<p>ユーザには以下の権限を付与できます。</p>
+<table>
+<thead>
+<tr>
+<th>権限</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Web:Read</td>
+<td>Webアプリへのログイン（閲覧のみ）</td>
+</tr>
+<tr>
+<td>Web:Write</td>
+<td>Webアプリへのログイン（編集可能）</td>
+</tr>
+<tr>
+<td>App:Read</td>
+<td>モバイルアプリへのログイン（閲覧のみ）</td>
+</tr>
+<tr>
+<td>App:Write</td>
+<td>モバイルアプリへのログイン（編集可能）</td>
+</tr>
+<tr>
+<td>Data:Export</td>
+<td>データのエクスポート権限</td>
+</tr>
+<tr>
+<td>User:Admin</td>
+<td>ユーザ管理権限</td>
+</tr>
+</tbody>
+</table>
+<h1 id="8-動作確認">8 動作確認</h1>
+<h2 id="1ブラウザからのアクセス">（1）ブラウザからのアクセス</h2>
+<p>WebサーバのURLにブラウザからアクセスし、ログイン画面が表示されることを確認します。</p>
+<pre><code>https://&lt;サーバのホスト名またはIPアドレス&gt;/
+</code></pre>
+<h2 id="2ログイン確認">（2）ログイン確認</h2>
+<p>7（2）で登録したユーザのメールアドレスとパスワードでログインできることを確認します。</p>
+<h2 id="3プロジェクト作成地図表示の確認">（3）プロジェクト作成・地図表示の確認</h2>
+<p>ログイン後、プロジェクト一覧画面が表示されることを確認します。新規プロジェクトを作成し、地図上でシミュレーション対象領域をポリゴンで指定できることを確認します。</p>
+<h2 id="4シミュレーション実行の確認">（4）シミュレーション実行の確認</h2>
+<p>プロジェクト設定画面にて、以下の環境条件を入力してシミュレーション実行ボタンが押下できることを確認します。</p>
+<ul>
+<li>環境設定：気温・湿度・風速・風向き</li>
+<li>温度設定（表面）：ビル壁面温度・地面温度・道路温度・水面温度</li>
+</ul>
+<p>シミュレーション実行後、処理ステータスが「処理中」に変わることを確認してください。バックエンドAPIが <code>thermal_env/process</code> エンドポイントを受け取り、OpenFOAM の <code>buoyantBoussinesqSimpleFoam</code> ソルバーが起動することを計算ログ（<code>log</code> ファイル）で確認します。</p>
+<p>処理完了（「完了」ステータス）後に、以下の結果タブが表示されることを確認します。</p>
+<ul>
+<li>地面温度</li>
+<li>高さ1.2m 気温</li>
+<li>高さ1.2m 湿度</li>
+<li>WBGT（暑さ指数）</li>
+<li>3Dビュー（Cesium）</li>
+</ul>
 
 </article>
           </div>
