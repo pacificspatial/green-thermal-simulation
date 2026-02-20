@@ -1,27 +1,25 @@
 # 温熱環境シミュレーション機能
 
-![概要](./img/greendashboard_001.png)
+![概要](./img/thermal_001.png)
 
 ## 更新履歴
 | 更新日時 | リリース | 更新内容 |
 |-------------|--------------|----------------------------------------------|
-| 2026/3/** | 1st Release | 初版リリース |
+| 2026/3/19 | 1st Release | 初版リリース |
 
 
 ## 1. 概要
 本リポジトリでは、2025年度のProject PLATEAUで開発した「樹木データを活用した温熱環境シミュレータの開発」温熱環境シミュレーション機能のソースコードを公開しています。
 
-本機能は、PLATEAUの3D都市モデルおよび樹木データを活用し、任意の環境条件（気温・湿度・風速・風向き・各面温度）を入力することで、対象エリアの温熱環境（気温・湿度・WBGT等）を数値流体計算（CFD）によりシミュレートするWebアプリケーションです。バックエンドの流体計算エンジンとして [OpenFOAM v2506](https://www.openfoam.com/news/main-news/openfoam-v2506) を使用しており、樹木の影響を組み込む植生キャノピーモデル（`canopyModels_v2506`）を同梱しています。
-
-本システムの詳細については[技術検証レポート](https://www.mlit.go.jp/plateau/file/libraries/doc/*****)を参照してください。
+本システムは、3D都市モデルを活用した樹木管理機能及び緑の効果の定量的評価を支援する取り組みである「樹木データを活用した温熱環境シミュレータの開発」の一部として開発されたWebアプリケーションです。
 
 ## 2. 「温熱環境シミュレーション機能」について
 本機能は、地方公共団体や民間企業等が樹木・緑地データを活用して都市の温熱環境を把握・改善するための意思決定支援ツールです。
 
-本システムの詳細については[技術検証レポート](https://www.mlit.go.jp/plateau/file/libraries/doc/*****)を参照してください。
+本システムの詳細については[技術検証レポート](https://www.mlit.go.jp/plateau/file/libraries/doc/plateau_tech_doc_0136_ver01.pdf)を参照してください。
 
 ## 3. 利用手順
-本システムの構築手順及び利用手順については[利用チュートリアル](https://project-plateau.github.io/green-dashboard)を参照してください。
+本システムの構築手順及び利用手順については[利用チュートリアル](https://project-plateau.github.io/green-thermal-simulation)を参照してください。
 
 ## 4. システム概要
 ### 【シミュレーションプロジェクト管理】
@@ -119,6 +117,5 @@ OpenFOAM によるシミュレーション計算サーバの動作環境は以�
 - 本リポジトリの利用により生じた損失及び損害等について、国土交通省はいかなる責任も負わないものとします。
 
 ## 10. 参考資料
-- 技術検証レポート: https://www.mlit.go.jp/plateau/file/libraries/doc/****.pdf
-- PLATEAU WebサイトのUse caseページ「樹木データを活用した温熱環境シミュレータの開発」: https://www.mlit.go.jp/plateau/use-case/uc24-17/
-- OpenFOAM v2506: https://www.openfoam.com/news/main-news/openfoam-v2506
+- 技術検証レポート: https://www.mlit.go.jp/plateau/file/libraries/doc/plateau_tech_doc_0136_ver01.pdf
+- PLATEAU WebサイトのUse caseページ「樹木データを活用した温熱環境シミュレータの開発」: https://www.mlit.go.jp/plateau/use-case/uc25-11/
