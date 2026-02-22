@@ -33,8 +33,8 @@
   - 表面温度設定：ビル壁面・地面・道路・水面
 
 #### ①シミュレーション結果の表示
-- Cesium
-- ParaView Glance
+- 出力結果（温度、湿度、WBGT）を Cesium および ParaView Glance で表示します
+- 出力結果はVTKおよびglTF形式でダウンロードが可能です
 
 ## 5. 利用技術
 
