@@ -235,16 +235,6 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "resources/index2.png",
-      "output": {
-        "resource": {
-          "relative_path": "resources/index2.png"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "Resource",
       "source_relative_path": "resources/logo.svg",
       "output": {
         "resource": {
