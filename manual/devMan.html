@@ -79,12 +79,13 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="環境構築手順書">環境構築手順書</h1>
 
+<h1 id="環境構築手順書-1">環境構築手順書</h1>
 <h1 id="1-本書について">1 本書について</h1>
-<p>本書では、温熱環境シミュレーション機能（以下「本システム」という。）の利用環境構築手順について記載しています。本システムは、PLATEAUの3D都市モデルおよび樹木データを活用し、任意の環境条件下における気温・湿度・WBGT（暑さ指数）等の温熱環境を数値流体計算（CFD）によりシミュレートするWebアプリケーションです。バックエンドの計算エンジンとして OpenFOAM v2506 を使用し、植生キャノピーモデル（<code>canopyModels_v2506</code>）により樹木の気流・熱への影響を再現します。</p>
+<p>本書では、温熱環境シミュレーション機能（以下「本システム」という。）の利用環境構築手順について記載しています。本システムは、PLATEAUの3D都市モデルおよび樹木データを活用し、対象エリアの温熱環境のシミュレーションを行う機能です。</p>
+<p>本システムは、3D都市モデルを活用した樹木管理機能及び緑の効果の定量的評価を支援する取り組みである「樹木データを活用した温熱環境シミュレータの開発」の一部として開発されたWebアプリケーションです。</p>
 <p>本システムの構成や仕様の詳細については以下も参考にしてください。</p>
 <ul>
-<li><a href="https://www.mlit.go.jp/plateau/file/libraries/doc/*****">技術検証レポート</a></li>
-<li><a href="https://www.mlit.go.jp/plateau/use-case/uc24-17/">PLATEAU Use case「樹木データを活用した温熱環境シミュレータの開発」</a></li>
+<li><a href="https://www.mlit.go.jp/plateau/file/libraries/doc/plateau_tech_doc_0136_ver01.pdf">技術検証レポート</a></li>
 </ul>
 <h1 id="2-動作環境">2 動作環境</h1>
 <p>本システムのWebアプリケーションサーバサイドの動作環境は以下のとおりです。</p>
@@ -223,541 +224,60 @@
 </table>
 <h1 id="3-事前準備">3 事前準備</h1>
 <p>本システムで利用する下記のソフトウェア・サービスを準備します。</p>
-<h2 id="1データベースの準備">（1）データベースの準備</h2>
-<p><a href="https://github.com/postgres/postgres">PostgreSQL</a> を使ってPostgreSQLサーバを起動します。その上で、位置情報を扱うための拡張機能である <a href="https://github.com/postgis/postgis">PostGIS</a> をインストールします。</p>
-<pre><code class="lang-sql">-- PostGIS の有効化
-CREATE EXTENSION IF NOT EXISTS postgis;
-</code></pre>
-<h2 id="2webサーバの準備">（2）Webサーバの準備</h2>
-<p><a href="https://httpd.apache.org/">Apache HTTP Server</a> を使ってWebサーバを起動します。ビルド済みのフロントエンド資材を配信するためのドキュメントルートを設定してください。</p>
-<h2 id="3nodejs-の準備">（3）Node.js の準備</h2>
-<p>フロントエンドのビルドには Node.js が必要です。<a href="https://nodejs.org/">Node.js 公式サイト</a>より、LTS版（v20以上）をインストールしてください。</p>
-<pre><code class="lang-bash"># バージョン確認
-node -v   # v20.x.x 以上であることを確認
-npm -v
-</code></pre>
-<h2 id="4firebase-プロジェクトの準備">（4）Firebase プロジェクトの準備</h2>
-<ol>
-<li><a href="https://console.firebase.google.com/">Firebase コンソール</a>で新規プロジェクトを作成します。</li>
-<li><strong>Authentication</strong> を有効化し、<strong>メール/パスワード</strong> 認証プロバイダを有効にします。</li>
-<li>プロジェクトの設定画面から以下の値を控えます。</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th>環境変数名</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>VITE_FIREBASE_API_KEY</code></td>
-<td>Firebase API キー</td>
-</tr>
-<tr>
-<td><code>VITE_FIREBASE_AUTH_DOMAIN</code></td>
-<td>Firebase Auth ドメイン</td>
-</tr>
-<tr>
-<td><code>VITE_FIREBASE_PROJECT_ID</code></td>
-<td>Firebase プロジェクト ID</td>
-</tr>
-<tr>
-<td><code>VITE_FIREBASE_STORAGE_BUCKET</code></td>
-<td>Firebase Storage バケット</td>
-</tr>
-<tr>
-<td><code>VITE_FIREBASE_APP_ID</code></td>
-<td>Firebase アプリ ID</td>
-</tr>
-<tr>
-<td><code>VITE_FIREBASE_MEASUREMENT_ID</code></td>
-<td>Firebase 計測 ID</td>
-</tr>
-</tbody>
-</table>
-<h2 id="5cesium-ion-の準備">（5）Cesium ion の準備</h2>
-<p>3D都市モデル（3DTiles）を配信するために <a href="https://cesium.com/platform/cesium-ion/">Cesium ion</a> のアカウントを取得し、以下の手順を実施します。</p>
-<ol>
-<li>Cesium ion にサインインし、3D都市モデルデータ（建物・樹木等）をアップロードします。</li>
-<li>タイル変換処理が完了したら、アセットIDとアクセストークンを控えます。</li>
-</ol>
-<h2 id="6openfoam-のインストール">（6）OpenFOAM のインストール</h2>
-<p>シミュレーション計算サーバ（Linux 64bit）に OpenFOAM v2506 をインストールします。インストール手順は公式サイトを参照してください。</p>
-<p><a href="https://www.openfoam.com/news/main-news/openfoam-v2506">https://www.openfoam.com/news/main-news/openfoam-v2506</a></p>
-<p>インストール後、OpenFOAM の環境変数を読み込みます。</p>
-<pre><code class="lang-bash">source /usr/lib/openfoam/openfoam2506/etc/bashrc
-</code></pre>
-<p>インストール先によってパスは異なります。<code>foamVersion</code> コマンドでバージョンを確認してください。</p>
-<pre><code class="lang-bash">foamVersion   # OpenFOAM-v2506 と表示されることを確認
-</code></pre>
+<p>（1）データベースの準備</p>
+<p><a href="https://github.com/postgres/postgres">こちら</a>を利用してPostgreSQLサーバを起動します。その上で、位置情報を扱うための拡張機能である <a href="https://github.com/postgis/postgis">PostGIS</a> をインストールします。</p>
+<p>（2）Webサーバの準備</p>
+<p><a href="https://httpd.apache.org/">こちら</a>を利用してWebサーバを起動します。ビルド済みのフロントエンド資材を配信するためのドキュメントルートを設定してください。</p>
+<p>（3）Node.js の準備</p>
+<p><a href="https://nodejs.org/">こちら</a>からNode.js LTS版（v20以上）をインストールします。フロントエンドのビルドに使用します。</p>
+<p>（4）Firebase プロジェクトの準備</p>
+<p><a href="https://console.firebase.google.com/">Firebase コンソール</a>で新規プロジェクトを作成します。Authentication を有効化し、メール/パスワード認証プロバイダを有効にします。プロジェクトの設定画面から API キーや Auth ドメインなどの接続情報を控えてください。</p>
+<p>（5）Cesium ion の準備</p>
+<p><a href="https://cesium.com/platform/cesium-ion/">Cesium ion</a> のアカウントを取得し、3D都市モデルデータ（建物・樹木等）をアップロードします。タイル変換処理が完了したら、アセットIDとアクセストークンを控えてください。</p>
+<p>（6）OpenFOAM のインストール</p>
+<p>シミュレーション計算サーバ（Linux 64bit）に <a href="https://www.openfoam.com/news/main-news/openfoam-v2506">OpenFOAM v2506</a> をインストールします。インストール手順は公式サイトを参照してください。</p>
 <h1 id="4-インストール手順">4 インストール手順</h1>
-<h2 id="1リポジトリの取得">（1）リポジトリの取得</h2>
-<p><a href="https://github.com/Project-PLATEAU/green-thermal-simulation">こちら</a> から温熱環境シミュレーション機能のソースコードをクローンします。</p>
-<pre><code class="lang-bash">git clone https://github.com/Project-PLATEAU/green-thermal-simulation.git
-cd green-thermal-simulation
-</code></pre>
-<h2 id="2環境変数の設定">（2）環境変数の設定</h2>
+<p>（1）リポジトリの取得</p>
+<p><a href="https://github.com/Project-PLATEAU/green-thermal-simulation">こちら</a>から温熱環境シミュレーション機能のソースコードをダウンロードします。</p>
+<p>（2）環境変数の設定</p>
 <p>プロジェクトルート直下に <code>.env</code> ファイルを作成し、以下の環境変数を設定します。</p>
-<pre><code class="lang-dotenv"># アプリケーション名（任意）
-VITE_APP_NAME=thermal_env
-
-# バックエンドAPIのエンドポイント
-VITE_API_ENDPOINT=https://&lt;サーバのホスト名またはIPアドレス&gt;/api
-
-# Firebase 認証情報（3事前準備（4）で控えた値を設定）
-VITE_FIREBASE_API_KEY=&lt;FirebaseのapiKey&gt;
-VITE_FIREBASE_AUTH_DOMAIN=&lt;FirebaseのauthDomain&gt;
-VITE_FIREBASE_PROJECT_ID=&lt;FirebaseのprojectId&gt;
-VITE_FIREBASE_STORAGE_BUCKET=&lt;FirebaseのstorageBucket&gt;
-VITE_FIREBASE_APP_ID=&lt;FirebaseのappId&gt;
-VITE_FIREBASE_MEASUREMENT_ID=&lt;FirebaseのmeasurementId&gt;
-
-# Cesium ion アクセストークン（3事前準備（5）で控えた値を設定）
+<pre><code>VITE_API_ENDPOINT=&lt;バックエンドAPIのエンドポイント&gt;
+VITE_FIREBASE_API_KEY=&lt;FirebaseのAPIキー&gt;
+VITE_FIREBASE_AUTH_DOMAIN=&lt;FirebaseのAuthドメイン&gt;
+VITE_FIREBASE_PROJECT_ID=&lt;FirebaseのプロジェクトID&gt;
+VITE_FIREBASE_STORAGE_BUCKET=&lt;FirebaseのStorageバケット&gt;
+VITE_FIREBASE_APP_ID=&lt;FirebaseのアプリID&gt;
+VITE_FIREBASE_MEASUREMENT_ID=&lt;Firebaseの計測ID&gt;
 VITE_CESIUM_ION_TOKEN=&lt;Cesium ionのアクセストークン&gt;
-
-# Cesium ion アセットID（建物・樹木等の3DTilesアセットID）
 VITE_CESIUM_ASSET_ID=&lt;アセットID&gt;
-
-# データ暗号化キー（任意。設定するとAPIリクエストデータを暗号化）
-# VITE_ENCRYPTION_KEY=&lt;任意の文字列&gt;
 </code></pre>
-<h2 id="3依存ライブラリのインストール">（3）依存ライブラリのインストール</h2>
+<p><code>.env</code> ファイルは <code>.gitignore</code> で管理対象外となっています。誤ってGitにコミットしないよう注意してください。</p>
+<p>（3）依存ライブラリのインストールとビルド</p>
+<p>依存パッケージをインストールし、本番用ビルドを実行します。</p>
 <pre><code class="lang-bash">npm install
-</code></pre>
-<p><code>postinstall</code> スクリプトにより、以下の処理が自動的に実行されます。</p>
-<ul>
-<li><code>src/resources</code> を <code>public/resources</code> へコピー</li>
-<li><code>node_modules/cesium/Build/Cesium</code> を <code>src/cesium</code> および <code>public/cesium</code> へコピー</li>
-</ul>
-<h2 id="4ビルド本番環境">（4）ビルド（本番環境）</h2>
-<pre><code class="lang-bash">npm run build
+npm run build
 </code></pre>
 <p>ビルド成果物は <code>dist</code> ディレクトリに出力されます。</p>
-<h2 id="5webサーバへの配置">（5）Webサーバへの配置</h2>
-<p><code>dist</code> ディレクトリの内容を、3（2）で準備したWebサーバのドキュメントルートに配置します。</p>
-<pre><code class="lang-bash"># 例：Apache のドキュメントルートへコピー
-cp -r dist/* /var/www/html/
-</code></pre>
-<p>SPA（シングルページアプリケーション）のため、すべてのリクエストを <code>index.html</code> にフォールバックするよう Apache の設定を行います。</p>
-<pre><code class="lang-apache">&lt;Directory /var/www/html&gt;
-    Options -Indexes
-    AllowOverride All
-&lt;/Directory&gt;
-</code></pre>
-<p><code>.htaccess</code> をドキュメントルートに配置します。</p>
-<pre><code class="lang-apache">&lt;IfModule mod_rewrite.c&gt;
-    RewriteEngine On
-    RewriteBase /
-    RewriteRule ^index\.html$ - [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule . /index.html [L]
-&lt;/IfModule&gt;
-</code></pre>
-<h2 id="6開発サーバの起動開発時のみ">（6）開発サーバの起動（開発時のみ）</h2>
-<p>本番環境へのデプロイではなく、ローカル開発環境での動作確認を行う場合は以下のコマンドを実行します。</p>
-<pre><code class="lang-bash">npm run dev
-</code></pre>
-<p>デフォルトでは <code>http://localhost:5173</code> でアプリケーションが起動します。開発モードでは自動的にデバッグモード（<code>--mode=debug</code>）が有効になります。</p>
+<p>（4）Webサーバへの配置</p>
+<p><code>dist</code> ディレクトリの内容を、3（2）で準備したWebサーバのドキュメントルートに配置します。SPAのため、すべてのリクエストを <code>index.html</code> にフォールバックするよう <code>.htaccess</code> を設定してください。</p>
 <h1 id="5-openfoam-植生キャノピーモデルの構築">5 OpenFOAM 植生キャノピーモデルの構築</h1>
-<p>本システムのシミュレーション計算には、OpenFOAM 標準ソルバー <code>buoyantBoussinesqSimpleFoam</code>（浮力を考慮した非圧縮性定常 RANS 計算）に、植生キャノピーモデル（<code>canopyModels_v2506</code>）を追加した環境が必要です。キャノピーモデルは運動量・温度・乱流エネルギー・乱流エネルギー消散率の各方程式に樹木（植生）の影響を表すソース項を加えるライブラリです。</p>
-<p>OpenFOAM 計算サーバ（Linux 64bit）で以下の手順を実施してください。</p>
-<h2 id="1キャノピーモデルのコンパイル">（1）キャノピーモデルのコンパイル</h2>
-<p>リポジトリに同梱されている <code>canopyModels_v2506_tar.gz</code> を展開し、OpenFOAM の wmake でコンパイルします。</p>
-<pre><code class="lang-bash"># OpenFOAM 環境の読み込み（インストール先に応じてパスを変更）
-source /usr/lib/openfoam/openfoam2506/etc/bashrc
-
-# アーカイブの展開
-tar xzf canopyModels_v2506_tar.gz
-cd canopyModels_v2506
-
-# クリーンビルド
-wclean
-wmake -libso
-</code></pre>
-<p>コンパイルが成功すると、<code>$FOAM_USER_LIBBIN/libpreFlowModels.so</code> が生成されます。</p>
-<p>コンパイルされるソースの構成は以下のとおりです。</p>
-<table>
-<thead>
-<tr>
-<th>ソースファイル</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>fvOptions/atmPlantCanopyKSourceB</code></td>
-<td>乱流エネルギー k のソース項（B案）</td>
-</tr>
-<tr>
-<td><code>fvOptions/atmPlantCanopyTurbSourceB</code></td>
-<td>乱流エネルギー消散率 ε のソース項（B案）</td>
-</tr>
-<tr>
-<td><code>fvOptions/atmPlantCanopyKSourceD</code></td>
-<td>乱流エネルギー k のソース項（D案）</td>
-</tr>
-<tr>
-<td><code>fvOptions/atmPlantCanopyTurbSourceD</code></td>
-<td>乱流エネルギー消散率 ε のソース項（D案）</td>
-</tr>
-</tbody>
-</table>
-<h2 id="2計算ケースへのライブラリの組み込み">（2）計算ケースへのライブラリの組み込み</h2>
-<p>計算ケースの <code>case/system/controlDict</code> に以下の1行を追加してライブラリを読み込みます。</p>
-<pre><code class="lang-c++">libs (&quot;libpreFlowModels.so&quot;);
-</code></pre>
-<h2 id="3fvoptions-による計算条件の設定">（3）fvOptions による計算条件の設定</h2>
-<p>計算ケースの <code>case/constant/fvOptions</code> に植生キャノピーモデルのソース項を設定します。各ソース項の役割と主なパラメータは以下のとおりです。</p>
-<pre><code class="lang-c++">atmPlantCanopyUSource1   // 運動量式 U へのソース項
-{
-    type        atmPlantCanopyUSource;
-    selectionMode all;
-}
-
-atmPlantCanopyTSource1   // エネルギー式（温度 T）へのソース項
-{
-    type        atmPlantCanopyTSource;
-    selectionMode all;
-    Cp0         1005.0;   // 比熱 [J/(kg·K)]
-}
-
-atmPlantCanopyTurbSource1  // 乱流エネルギー消散率 ε へのソース項
-{
-    type        atmPlantCanopyTurbSourceB;
-    selectionMode all;
-    rho         rho;
-    Cpe1        1.95;     // モデル係数（標準値 1.5〜1.8）
-}
-
-atmPlantCanopyKSource1   // 乱流エネルギー k へのソース項
-{
-    type        atmPlantCanopyKSourceB;
-    selectionMode all;
-    rho         rho;
-}
-</code></pre>
-<p>各ソース項で使用される主なモデルパラメータは以下のとおりです。</p>
-<table>
-<thead>
-<tr>
-<th>パラメータ</th>
-<th>記号</th>
-<th>単位</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>葉面積密度</td>
-<td>LAD</td>
-<td>1/m</td>
-<td>単位体積あたりの葉面積</td>
-</tr>
-<tr>
-<td>植生抵抗係数</td>
-<td>Cd</td>
-<td>-</td>
-<td>樹木キャノピー抵抗係数</td>
-</tr>
-<tr>
-<td>比熱</td>
-<td>Cp0</td>
-<td>J/(kg·K)</td>
-<td>空気の比熱（標準値：1005.0）</td>
-</tr>
-<tr>
-<td>樹高ベース熱流束</td>
-<td>qh</td>
-<td>W/m²</td>
-<td>樹高に基づく単位面積あたりの熱流束</td>
-</tr>
-<tr>
-<td>モデル係数</td>
-<td>Cpe1</td>
-<td>-</td>
-<td>ε ソース項のモデル係数（標準値：1.95）</td>
-</tr>
-</tbody>
-</table>
-<h2 id="4シミュレーションの実行">（4）シミュレーションの実行</h2>
-<h3 id="シングルコア実行">シングルコア実行</h3>
-<pre><code class="lang-bash">buoyantBoussinesqSimpleFoam | tee log
-</code></pre>
-<h3 id="並列実行例8コア">並列実行（例：8コア）</h3>
-<pre><code class="lang-bash">decomposePar
-mpirun -np 8 buoyantBoussinesqSimpleFoam -parallel | tee log
-reconstructPar
-</code></pre>
-<p>1回のシミュレーション実行には数時間程度を要します。計算完了後、バックエンドAPIが結果を読み取り、フロントエンドのレポート画面に反映します。</p>
+<p>本システムのシミュレーション計算には、OpenFOAM 標準ソルバーに植生キャノピーモデル（<code>canopyModels_v2506</code>）を追加した環境が必要です。OpenFOAM 計算サーバ（Linux 64bit）で以下の手順を実施してください。</p>
+<p>（1）キャノピーモデルのコンパイル</p>
+<p>リポジトリに同梱されている <code>canopyModels_v2506_tar.gz</code> を展開し、OpenFOAM の <code>wmake</code> でコンパイルします。コンパイルが成功すると <code>$FOAM_USER_LIBBIN/libpreFlowModels.so</code> が生成されます。</p>
+<p>（2）計算ケースへの組み込み</p>
+<p>計算ケースの <code>system/controlDict</code> に生成したライブラリを読み込む設定を追加し、<code>constant/fvOptions</code> に植生キャノピーモデルのソース項を設定します。</p>
+<p>（3）シミュレーションの実行</p>
+<p>設定完了後、<code>buoyantBoussinesqSimpleFoam</code> ソルバーを実行します。1回のシミュレーション実行には数時間程度を要します。計算完了後、バックエンドAPIが結果を読み取り、フロントエンドのレポート画面に反映します。</p>
 <h1 id="6-バックエンドapiの構築">6 バックエンドAPIの構築</h1>
-<p>本システムのフロントエンドは、バックエンドAPIと連携して動作します。バックエンドAPIはPostgreSQLデータベースに接続し、シミュレーションプロジェクトの管理およびOpenFOAM計算処理のトリガーを担います。</p>
-<h2 id="1データベースの作成">（1）データベースの作成</h2>
-<p>PostgreSQLに接続し、本システム用のデータベースを作成します。</p>
-<pre><code class="lang-sql">CREATE DATABASE green_thermal_simulation ENCODING 'UTF8';
-\c green_thermal_simulation
-CREATE EXTENSION IF NOT EXISTS postgis;
-</code></pre>
-<h2 id="2テーブルの作成">（2）テーブルの作成</h2>
-<p>シミュレーションプロジェクトの主要なデータ項目は以下のとおりです。バックエンドAPIの実装に合わせてテーブルを作成してください。</p>
-<table>
-<thead>
-<tr>
-<th>属性項目</th>
-<th>フィールド名</th>
-<th>データ型</th>
-<th>備考</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>内部ID</td>
-<td>id</td>
-<td>integer</td>
-<td>主キー</td>
-</tr>
-<tr>
-<td>プロジェクトUID</td>
-<td>uid</td>
-<td>text</td>
-<td>ユニーク識別子</td>
-</tr>
-<tr>
-<td>プロジェクト名</td>
-<td>name</td>
-<td>text</td>
-<td></td>
-</tr>
-<tr>
-<td>解析対象領域</td>
-<td>the_geom</td>
-<td>geometry(Polygon, 4326)</td>
-<td>PostGIS。ユーザが地図上で指定したポリゴン</td>
-</tr>
-<tr>
-<td>気温 (°C)</td>
-<td>temperature</td>
-<td>float</td>
-<td></td>
-</tr>
-<tr>
-<td>湿度 (%)</td>
-<td>humidity</td>
-<td>float</td>
-<td></td>
-</tr>
-<tr>
-<td>風速 (m/s)</td>
-<td>wind_speed</td>
-<td>float</td>
-<td></td>
-</tr>
-<tr>
-<td>風向き (度)</td>
-<td>wind_direction</td>
-<td>integer</td>
-<td>0:北 / 90:東 / 180:南 / 270:西</td>
-</tr>
-<tr>
-<td>ビル壁面温度 (°C)</td>
-<td>building_wall_temperature</td>
-<td>float</td>
-<td></td>
-</tr>
-<tr>
-<td>地面温度 (°C)</td>
-<td>ground_temperature</td>
-<td>float</td>
-<td></td>
-</tr>
-<tr>
-<td>道路温度 (°C)</td>
-<td>road_temperature</td>
-<td>float</td>
-<td></td>
-</tr>
-<tr>
-<td>水面温度 (°C)</td>
-<td>water_surface_temperature</td>
-<td>float</td>
-<td></td>
-</tr>
-<tr>
-<td>カメラ位置</td>
-<td>camera_position</td>
-<td>jsonb</td>
-<td>Cesiumビューアのカメラ位置・姿勢</td>
-</tr>
-<tr>
-<td>処理ステータス</td>
-<td>process_status</td>
-<td>text</td>
-<td>waiting / processing / done</td>
-</tr>
-<tr>
-<td>処理開始日時</td>
-<td>process_start_at</td>
-<td>text</td>
-<td></td>
-</tr>
-<tr>
-<td>処理終了日時</td>
-<td>process_end_at</td>
-<td>text</td>
-<td></td>
-</tr>
-<tr>
-<td>作成日時</td>
-<td>created_at</td>
-<td>text</td>
-<td></td>
-</tr>
-<tr>
-<td>作成日時 (UNIX)</td>
-<td>created_at_unix</td>
-<td>bigint</td>
-<td></td>
-</tr>
-<tr>
-<td>更新日時</td>
-<td>updated_at</td>
-<td>text</td>
-<td></td>
-</tr>
-<tr>
-<td>更新日時 (UNIX)</td>
-<td>updated_at_unix</td>
-<td>bigint</td>
-<td></td>
-</tr>
-<tr>
-<td>作成ユーザUID</td>
-<td>created_user_uid</td>
-<td>text</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>シミュレーション結果（地面温度・高さ1.2m気温・高さ1.2m湿度・WBGT等）を格納するテーブルについては、バックエンドAPIの仕様に合わせて追加のテーブルを作成してください。</p>
-<h2 id="3apiエンドポイント">（3）APIエンドポイント</h2>
-<p>フロントエンドが利用する主要なAPIエンドポイントは以下のとおりです。</p>
-<table>
-<thead>
-<tr>
-<th>エンドポイント</th>
-<th>メソッド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>system/env</code></td>
-<td>GET</td>
-<td>システム環境設定の取得</td>
-</tr>
-<tr>
-<td><code>system/column_defs</code></td>
-<td>GET</td>
-<td>列定義情報の取得</td>
-</tr>
-<tr>
-<td><code>user</code></td>
-<td>GET</td>
-<td>ログインユーザ情報の取得</td>
-</tr>
-<tr>
-<td><code>thermal_env</code></td>
-<td>GET</td>
-<td>シミュレーションプロジェクト一覧の取得</td>
-</tr>
-<tr>
-<td><code>thermal_env</code></td>
-<td>POST</td>
-<td>シミュレーションプロジェクトの新規作成</td>
-</tr>
-<tr>
-<td><code>thermal_env</code></td>
-<td>PUT</td>
-<td>シミュレーションプロジェクトの更新</td>
-</tr>
-<tr>
-<td><code>thermal_env/process</code></td>
-<td>PUT</td>
-<td>OpenFOAM シミュレーション実行のリクエスト</td>
-</tr>
-</tbody>
-</table>
+<p>PostgreSQLに接続し、本システム用のデータベースを作成します。PostGIS拡張を有効化した上で、バックエンドAPIの実装に合わせてテーブルを作成してください。バックエンドAPIはシミュレーションプロジェクトの管理およびOpenFOAM計算処理のトリガーを担います。</p>
 <h1 id="7-初期データの投入">7 初期データの投入</h1>
 <p>本システムの稼働に必要なデータを投入します。</p>
-<h2 id="13d都市モデルデータの登録cesium-ion">（1）3D都市モデルデータの登録（Cesium ion）</h2>
-<p>3D都市モデル（建物モデル・樹木モデル等）を Cesium ion にアップロードし、配信の準備を行います。</p>
-<ol>
-<li>Cesium ion の管理コンソールにアクセスします。</li>
-<li>対象データ（CityGML、3DTiles等）をアップロードし、タイル変換処理を実行します。</li>
-<li>生成されたアセットIDを控え、<code>.env</code> の <code>VITE_CESIUM_ASSET_ID</code> に反映します。</li>
-</ol>
-<h2 id="2ユーザの登録">（2）ユーザの登録</h2>
-<p>本システムはFirebase Authentication でユーザ認証を行います。初期ユーザの登録はバックエンドAPI のユーザ管理機能、またはFirebase コンソールから実施してください。</p>
-<p>ユーザには以下の権限を付与できます。</p>
-<table>
-<thead>
-<tr>
-<th>権限</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Web:Read</td>
-<td>Webアプリへのログイン（閲覧のみ）</td>
-</tr>
-<tr>
-<td>Web:Write</td>
-<td>Webアプリへのログイン（編集可能）</td>
-</tr>
-<tr>
-<td>App:Read</td>
-<td>モバイルアプリへのログイン（閲覧のみ）</td>
-</tr>
-<tr>
-<td>App:Write</td>
-<td>モバイルアプリへのログイン（編集可能）</td>
-</tr>
-<tr>
-<td>Data:Export</td>
-<td>データのエクスポート権限</td>
-</tr>
-<tr>
-<td>User:Admin</td>
-<td>ユーザ管理権限</td>
-</tr>
-</tbody>
-</table>
+<p>（1）3D都市モデルデータの登録</p>
+<p>3D都市モデル（建物モデル・樹木モデル等）を Amazon S3 にアップロードします。</p>
+<p>（2）ユーザの登録</p>
+<p>Firebase コンソールまたはバックエンドAPIのユーザ管理機能から初期ユーザを登録します。ユーザには用途に応じて閲覧・編集・管理などの権限を付与してください。</p>
 <h1 id="8-動作確認">8 動作確認</h1>
-<h2 id="1ブラウザからのアクセス">（1）ブラウザからのアクセス</h2>
-<p>WebサーバのURLにブラウザからアクセスし、ログイン画面が表示されることを確認します。</p>
-<pre><code>https://&lt;サーバのホスト名またはIPアドレス&gt;/
-</code></pre>
-<h2 id="2ログイン確認">（2）ログイン確認</h2>
-<p>7（2）で登録したユーザのメールアドレスとパスワードでログインできることを確認します。</p>
-<h2 id="3プロジェクト作成地図表示の確認">（3）プロジェクト作成・地図表示の確認</h2>
-<p>ログイン後、プロジェクト一覧画面が表示されることを確認します。新規プロジェクトを作成し、地図上でシミュレーション対象領域をポリゴンで指定できることを確認します。</p>
-<h2 id="4シミュレーション実行の確認">（4）シミュレーション実行の確認</h2>
-<p>プロジェクト設定画面にて、以下の環境条件を入力してシミュレーション実行ボタンが押下できることを確認します。</p>
-<ul>
-<li>環境設定：気温・湿度・風速・風向き</li>
-<li>温度設定（表面）：ビル壁面温度・地面温度・道路温度・水面温度</li>
-</ul>
-<p>シミュレーション実行後、処理ステータスが「処理中」に変わることを確認してください。バックエンドAPIが <code>thermal_env/process</code> エンドポイントを受け取り、OpenFOAM の <code>buoyantBoussinesqSimpleFoam</code> ソルバーが起動することを計算ログ（<code>log</code> ファイル）で確認します。</p>
-<p>処理完了（「完了」ステータス）後に、以下の結果タブが表示されることを確認します。</p>
-<ul>
-<li>地面温度</li>
-<li>高さ1.2m 気温</li>
-<li>高さ1.2m 湿度</li>
-<li>WBGT（暑さ指数）</li>
-<li>3Dビュー（Cesium）</li>
-</ul>
+<p>WebサーバのURLにブラウザからアクセスし、ログイン画面が表示されることを確認します。登録したユーザでログインし、プロジェクト一覧画面が表示されることを確認してください。新規プロジェクトを作成し、地図上でシミュレーション対象領域を指定後、気温・湿度・風速・風向きなどの環境条件を入力してシミュレーションを実行します。処理完了後、地面温度・気温・湿度・WBGTなどの結果タブおよび3DビューがCesiumで表示されることを確認してください。</p>
 
 </article>
           </div>
