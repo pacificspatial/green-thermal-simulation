@@ -284,6 +284,56 @@
       "version": ""
     },
     {
+      "type": "Resource",
+      "source_relative_path": "resources/userMan/d005.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/userMan/d005.png"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/userMan/d006.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/userMan/d006.png"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/userMan/d007.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/userMan/d007.png"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/userMan/d008.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/userMan/d008.png"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/userMan/d009.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/userMan/d009.png"
+        }
+      },
+      "version": ""
+    },
+    {
       "type": "Toc",
       "source_relative_path": "toc.yml",
       "output": {
