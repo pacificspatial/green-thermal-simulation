@@ -60,4 +60,4 @@
 
 ・保存後にエクスポートボタンが表示されます。算出結果をExcel形式でエクスポートします
 
-![](../resources/userMan/b004.png)
+![](../resources/userMan/d004.png)
