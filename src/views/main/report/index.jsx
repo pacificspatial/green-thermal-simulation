@@ -7,7 +7,6 @@ import Humidity120View from "./Humidity120"
 import WbgtView from "./wbgt"
 import CesiumView from "./cesium"
 import _ from "ansuko"
-import SampleView from "./sample"
 import { over } from "lodash"
 import { MainDataContext } from "@team4am/fp-core"
 
