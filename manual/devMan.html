@@ -81,11 +81,6 @@
 
 <h1 id="1-本書について">1 本書について</h1>
 <p>本書では、温熱環境シミュレーション機能（以下「本システム」という。）の利用環境構築手順について記載しています。本システムは、PLATEAUの3D都市モデルおよび樹木データを活用し、対象エリアの温熱環境のシミュレーションを行う機能です。</p>
-<p>本システムは、3D都市モデルを活用した樹木管理機能及び緑の効果の定量的評価を支援する取り組みである「樹木データを活用した温熱環境シミュレータの開発」の一部として開発されたWebアプリケーションです。</p>
-<p>本システムの構成や仕様の詳細については以下も参考にしてください。</p>
-<ul>
-<li><a href="https://www.mlit.go.jp/plateau/file/libraries/doc/plateau_tech_doc_0136_ver01.pdf">技術検証レポート</a></li>
-</ul>
 <h1 id="2-動作環境">2 動作環境</h1>
 <p>本システムのWebアプリケーションサーバサイドの動作環境は以下のとおりです。</p>
 <table>
@@ -99,37 +94,23 @@
 <tbody>
 <tr>
 <td>OS</td>
-<td>Microsoft Windows 10 以上　または macOS 12 Monterey 以上</td>
+<td>Amazon Linux 2023 以上（AWS EC2）</td>
 <td>同左</td>
 </tr>
 <tr>
 <td>CPU</td>
-<td>Pentium 4 以上</td>
+<td>EC2 インスタンスタイプに依存</td>
 <td>同左</td>
 </tr>
 <tr>
 <td>メモリ</td>
-<td>8GB以上</td>
+<td>EC2 インスタンスタイプに依存（4GB 以上）</td>
 <td>同左</td>
 </tr>
-</tbody>
-</table>
-<p>OpenFOAM シミュレーション計算サーバの動作環境は以下のとおりです。</p>
-<table>
-<thead>
 <tr>
-<th>項目</th>
-<th>動作環境</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>OS</td>
-<td>Linux 64bit</td>
-</tr>
-<tr>
-<td>ソフトウェア</td>
-<td>OpenFOAM v2506</td>
+<td>ストレージ</td>
+<td>AWS S3</td>
+<td>同左</td>
 </tr>
 </tbody>
 </table>
@@ -161,63 +142,39 @@
 <tbody>
 <tr>
 <td>オープンソースソフトウェア</td>
-<td><a href="https://httpd.apache.org/">Apache HTTP Server</a></td>
-<td>2.4.58</td>
-<td>Webアプリを配信するためのWebサーバ</td>
-</tr>
-<tr>
-<td>オープンソースソフトウェア</td>
 <td><a href="https://github.com/postgis/postgis">PostGIS</a></td>
 <td>3.4.1</td>
-<td>PostgreSQL で位置情報を扱うための拡張機能</td>
+<td>PostgreSQLで位置情報を扱うことを可能とする拡張機能</td>
 </tr>
 <tr>
 <td>オープンソースソフトウェア</td>
 <td><a href="https://www.openfoam.com/">OpenFOAM</a></td>
 <td>v2506</td>
-<td>数値流体計算（CFD）エンジン。温熱環境シミュレーションの中核</td>
-</tr>
-<tr>
-<td>オープンソースRDBMS</td>
-<td><a href="https://github.com/postgres/postgres">PostgreSQL</a></td>
-<td>16.2</td>
-<td>各種データを格納するリレーショナルデータベース</td>
-</tr>
-<tr>
-<td>オープンソースライブラリ</td>
-<td><a href="https://github.com/facebook/react">React.js</a></td>
-<td>19.x</td>
-<td>UIを構築するためのJavaScriptライブラリ</td>
-</tr>
-<tr>
-<td>オープンソースライブラリ</td>
-<td><a href="https://github.com/maplibre/maplibre-gl-js">MapLibre GL JS</a></td>
-<td>5.x</td>
-<td>地図表示ライブラリ</td>
+<td>オープンソースの数値流体計算（CFD）ソフトウェア。温熱環境シミュレーションの計算エンジン</td>
 </tr>
 <tr>
 <td>オープンソースライブラリ</td>
 <td><a href="https://github.com/CesiumGS/cesium">CesiumJS</a></td>
 <td>1.136</td>
-<td>3Dビューア用ライブラリ</td>
+<td>3Dビューワ上にデータを描画するためのライブラリ</td>
 </tr>
 <tr>
-<td>オープンソースライブラリ</td>
-<td><a href="https://mui.com/">MUI（Material UI）</a></td>
-<td>7.x</td>
-<td>UIコンポーネントライブラリ</td>
+<td>オープンソースRDBMS</td>
+<td><a href="https://github.com/postgres/postgres">PostgreSQL</a></td>
+<td>16.2</td>
+<td>各種配信するデータを格納するリレーショナルデータベース</td>
+</tr>
+<tr>
+<td>商用ソフトウェア</td>
+<td><a href="https://cesium.com/platform/cesium-ion/">Cesium ion</a></td>
+<td>-</td>
+<td>3Dデータの変換と配信のクラウドサービス</td>
 </tr>
 <tr>
 <td>クラウドサービス</td>
 <td><a href="https://firebase.google.com/">Firebase</a></td>
-<td>12.x</td>
-<td>認証機能（Firebase Authentication）を提供</td>
-</tr>
-<tr>
-<td>商用クラウド</td>
-<td><a href="https://cesium.com/platform/cesium-ion/">Cesium ion</a></td>
 <td>-</td>
-<td>3Dデータの変換と配信サービス</td>
+<td>認証機能を提供するクラウドサービス</td>
 </tr>
 </tbody>
 </table>
@@ -250,7 +207,6 @@ VITE_FIREBASE_MEASUREMENT_ID=&lt;Firebaseの計測ID&gt;
 VITE_CESIUM_ION_TOKEN=&lt;Cesium ionのアクセストークン&gt;
 VITE_CESIUM_ASSET_ID=&lt;アセットID&gt;
 </code></pre>
-<p><code>.env</code> ファイルは <code>.gitignore</code> で管理対象外となっています。誤ってGitにコミットしないよう注意してください。</p>
 <p>（3）依存ライブラリのインストールとビルド</p>
 <p>依存パッケージをインストールし、本番用ビルドを実行します。</p>
 <pre><code class="lang-bash">npm install
@@ -258,13 +214,23 @@ npm run build
 </code></pre>
 <p>ビルド成果物は <code>dist</code> ディレクトリに出力されます。</p>
 <p>（4）Webサーバへの配置</p>
-<p><code>dist</code> ディレクトリの内容を、3（2）で準備したWebサーバのドキュメントルートに配置します。SPAのため、すべてのリクエストを <code>index.html</code> にフォールバックするよう <code>.htaccess</code> を設定してください。</p>
-<h1 id="5-openfoam-植生キャノピーモデルの構築">5 OpenFOAM 植生キャノピーモデルの構築</h1>
-<p>本システムのシミュレーション計算には、OpenFOAM 標準ソルバーに植生キャノピーモデル（<code>canopyModels_v2506</code>）を追加した環境が必要です。OpenFOAM 計算サーバ（Linux 64bit）で以下の手順を実施してください。</p>
-<p>（1）キャノピーモデルのコンパイル</p>
+<p><code>dist</code> ディレクトリの内容を、3（2）で準備したWebサーバのドキュメントルートに配置します。</p>
+<p>また、ドキュメントルートに以下の内容で <code>.htaccess</code> ファイルを作成してください。</p>
+<pre><code>RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+</code></pre>
+<blockquote>
+<p><strong>注記</strong> 本システムは SPA（シングルページアプリケーション）のため、<code>/project/123</code> のような URL に直接アクセスするとサーバ側にファイルが存在せず 404 エラーになります。上記の設定により、すべてのリクエストを <code>index.html</code> に転送し、画面の描画を JavaScript 側に委ねます</p>
+</blockquote>
+<h1 id="5-openfoam-樹木モデルの構築">5 OpenFOAM 樹木モデルの構築</h1>
+<p>本システムのシミュレーション計算には、OpenFOAM 標準ソルバーに樹木モデル（<code>canopyModels_v2506</code>）を追加した環境が必要です。OpenFOAM 計算サーバ（Linux 64bit）で以下の手順を実施してください。</p>
+<p>（1）樹木モデルのコンパイル</p>
 <p>リポジトリに同梱されている <code>canopyModels_v2506_tar.gz</code> を展開し、OpenFOAM の <code>wmake</code> でコンパイルします。コンパイルが成功すると <code>$FOAM_USER_LIBBIN/libpreFlowModels.so</code> が生成されます。</p>
 <p>（2）計算ケースへの組み込み</p>
-<p>計算ケースの <code>system/controlDict</code> に生成したライブラリを読み込む設定を追加し、<code>constant/fvOptions</code> に植生キャノピーモデルのソース項を設定します。</p>
+<p>計算ケースの <code>system/controlDict</code> に生成したライブラリを読み込む設定を追加し、<code>constant/fvOptions</code> に樹木モデルのソース項を設定します。</p>
 <p>（3）シミュレーションの実行</p>
 <p>設定完了後、<code>buoyantBoussinesqSimpleFoam</code> ソルバーを実行します。1回のシミュレーション実行には数時間程度を要します。計算完了後、バックエンドAPIが結果を読み取り、フロントエンドのレポート画面に反映します。</p>
 <h1 id="6-バックエンドapiの構築">6 バックエンドAPIの構築</h1>
@@ -274,7 +240,7 @@ npm run build
 <p>（1）3D都市モデルデータの登録</p>
 <p>3D都市モデル（建物モデル・樹木モデル等）を Amazon S3 にアップロードします。</p>
 <p>（2）ユーザの登録</p>
-<p>Firebase コンソールまたはバックエンドAPIのユーザ管理機能から初期ユーザを登録します。ユーザには用途に応じて閲覧・編集・管理などの権限を付与してください。</p>
+<p>Firebase コンソールまたはバックエンドAPIのユーザ管理機能から初期ユーザを登録します。</p>
 <h1 id="8-動作確認">8 動作確認</h1>
 <p>WebサーバのURLにブラウザからアクセスし、ログイン画面が表示されることを確認します。登録したユーザでログインし、プロジェクト一覧画面が表示されることを確認してください。新規プロジェクトを作成し、地図上でシミュレーション対象領域を指定後、気温・湿度・風速・風向きなどの環境条件を入力してシミュレーションを実行します。</p>
 
