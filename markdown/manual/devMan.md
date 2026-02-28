@@ -107,7 +107,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.html [L]
 ```
-> **注記** 本システムは SPA（シングルページアプリケーション）のため、`/project/123` のような URL に直接アクセスするとサーバ側にファイルが存在せず 404 エラーになります。上記の設定により、すべてのリクエストを `index.html` に転送し、画面の描画を JavaScript 側に委ねます
+**注記** 本システムは SPA（シングルページアプリケーション）のため、`/project/123` のような URL に直接アクセスするとサーバ側にファイルが存在せず 404 エラーになります。上記の設定により、すべてのリクエストを `index.html` に転送し、画面の描画を JavaScript 側で行います
 
 # 5 OpenFOAM 樹木モデルの構築
 
