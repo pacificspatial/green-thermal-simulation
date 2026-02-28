@@ -4,28 +4,17 @@
 
 本書では、温熱環境シミュレーション機能（以下「本システム」という。）の利用環境構築手順について記載しています。本システムは、PLATEAUの3D都市モデルおよび樹木データを活用し、対象エリアの温熱環境のシミュレーションを行う機能です。
 
-本システムは、3D都市モデルを活用した樹木管理機能及び緑の効果の定量的評価を支援する取り組みである「樹木データを活用した温熱環境シミュレータの開発」の一部として開発されたWebアプリケーションです。
-
-本システムの構成や仕様の詳細については以下も参考にしてください。
-
-- [技術検証レポート](https://www.mlit.go.jp/plateau/file/libraries/doc/plateau_tech_doc_0136_ver01.pdf)
-
 # 2 動作環境
 
 本システムのWebアプリケーションサーバサイドの動作環境は以下のとおりです。
 
 | 項目 | 最小動作環境 | 推奨動作環境 |
 | --- | --- | --- |
-| OS | Microsoft Windows 10 以上　または macOS 12 Monterey 以上 | 同左 |
-| CPU | Pentium 4 以上 | 同左 |
-| メモリ | 8GB以上 | 同左 |
+| OS | Amazon Linux 2023 以上（AWS EC2） | 同左 |
+| CPU | EC2 インスタンスタイプに依存 | 同左 |
+| メモリ | EC2 インスタンスタイプに依存（4GB 以上） | 同左 |
+| ストレージ | AWS S3 | 同左 |
 
-OpenFOAM シミュレーション計算サーバの動作環境は以下のとおりです。
-
-| 項目 | 動作環境 |
-| --- | --- |
-| OS | Linux 64bit |
-| ソフトウェア | OpenFOAM v2506 |
 
 クライアント（ブラウザ）の動作環境は以下のとおりです。
 
@@ -37,16 +26,13 @@ OpenFOAM シミュレーション計算サーバの動作環境は以下のと�
 
 | 種別 | 名称 | バージョン | 内容 |
 | --- | --- | --- | --- |
-| オープンソースソフトウェア | [Apache HTTP Server](https://httpd.apache.org/) | 2.4.58 | Webアプリを配信するためのWebサーバ |
-| オープンソースソフトウェア | [PostGIS](https://github.com/postgis/postgis) | 3.4.1 | PostgreSQL で位置情報を扱うための拡張機能 |
-| オープンソースソフトウェア | [OpenFOAM](https://www.openfoam.com/) | v2506 | 数値流体計算（CFD）エンジン。温熱環境シミュレーションの中核 |
-| オープンソースRDBMS | [PostgreSQL](https://github.com/postgres/postgres) | 16.2 | 各種データを格納するリレーショナルデータベース |
-| オープンソースライブラリ | [React.js](https://github.com/facebook/react) | 19.x | UIを構築するためのJavaScriptライブラリ |
-| オープンソースライブラリ | [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) | 5.x | 地図表示ライブラリ |
-| オープンソースライブラリ | [CesiumJS](https://github.com/CesiumGS/cesium) | 1.136 | 3Dビューア用ライブラリ |
-| オープンソースライブラリ | [MUI（Material UI）](https://mui.com/) | 7.x | UIコンポーネントライブラリ |
-| クラウドサービス | [Firebase](https://firebase.google.com/) | 12.x | 認証機能（Firebase Authentication）を提供 |
-| 商用クラウド | [Cesium ion](https://cesium.com/platform/cesium-ion/) | - | 3Dデータの変換と配信サービス |
+| オープンソースソフトウェア | [PostGIS](https://github.com/postgis/postgis) | 3.4.1 | PostgreSQLで位置情報を扱うことを可能とする拡張機能 |
+| オープンソースソフトウェア | [OpenFOAM](https://www.openfoam.com/) | v2506 | オープンソースの数値流体計算（CFD）ソフトウェア。温熱環境シミュレーションの計算エンジン |
+| オープンソースライブラリ | [CesiumJS](https://github.com/CesiumGS/cesium) | 1.136 | 3Dビューワ上にデータを描画するためのライブラリ |
+| オープンソースRDBMS | [PostgreSQL](https://github.com/postgres/postgres) | 16.2 | 各種配信するデータを格納するリレーショナルデータベース |
+| 商用ソフトウェア | [Cesium ion](https://cesium.com/platform/cesium-ion/) | - | 3Dデータの変換と配信のクラウドサービス |
+| クラウドサービス | [Firebase](https://firebase.google.com/) | - | 認証機能を提供するクラウドサービス |
+
 
 # 3 事前準備
 
@@ -98,8 +84,6 @@ VITE_CESIUM_ION_TOKEN=<Cesium ionのアクセストークン>
 VITE_CESIUM_ASSET_ID=<アセットID>
 ```
 
-`.env` ファイルは `.gitignore` で管理対象外となっています。誤ってGitにコミットしないよう注意してください。
-
 （3）依存ライブラリのインストールとビルド
 
 依存パッケージをインストールし、本番用ビルドを実行します。
@@ -113,19 +97,29 @@ npm run build
 
 （4）Webサーバへの配置
 
-`dist` ディレクトリの内容を、3（2）で準備したWebサーバのドキュメントルートに配置します。SPAのため、すべてのリクエストを `index.html` にフォールバックするよう `.htaccess` を設定してください。
+`dist` ディレクトリの内容を、3（2）で準備したWebサーバのドキュメントルートに配置します。
 
-# 5 OpenFOAM 植生キャノピーモデルの構築
+また、ドキュメントルートに以下の内容で `.htaccess` ファイルを作成してください。
+```
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+```
+> **注記** 本システムは SPA（シングルページアプリケーション）のため、`/project/123` のような URL に直接アクセスするとサーバ側にファイルが存在せず 404 エラーになります。上記の設定により、すべてのリクエストを `index.html` に転送し、画面の描画を JavaScript 側に委ねます
 
-本システムのシミュレーション計算には、OpenFOAM 標準ソルバーに植生キャノピーモデル（`canopyModels_v2506`）を追加した環境が必要です。OpenFOAM 計算サーバ（Linux 64bit）で以下の手順を実施してください。
+# 5 OpenFOAM 樹木モデルの構築
 
-（1）キャノピーモデルのコンパイル
+本システムのシミュレーション計算には、OpenFOAM 標準ソルバーに樹木モデル（`canopyModels_v2506`）を追加した環境が必要です。OpenFOAM 計算サーバ（Linux 64bit）で以下の手順を実施してください。
+
+（1）樹木モデルのコンパイル
 
 リポジトリに同梱されている `canopyModels_v2506_tar.gz` を展開し、OpenFOAM の `wmake` でコンパイルします。コンパイルが成功すると `$FOAM_USER_LIBBIN/libpreFlowModels.so` が生成されます。
 
 （2）計算ケースへの組み込み
 
-計算ケースの `system/controlDict` に生成したライブラリを読み込む設定を追加し、`constant/fvOptions` に植生キャノピーモデルのソース項を設定します。
+計算ケースの `system/controlDict` に生成したライブラリを読み込む設定を追加し、`constant/fvOptions` に樹木モデルのソース項を設定します。
 
 （3）シミュレーションの実行
 
@@ -145,7 +139,7 @@ PostgreSQLに接続し、本システム用のデータベースを作成しま�
 
 （2）ユーザの登録
 
-Firebase コンソールまたはバックエンドAPIのユーザ管理機能から初期ユーザを登録します。ユーザには用途に応じて閲覧・編集・管理などの権限を付与してください。
+Firebase コンソールまたはバックエンドAPIのユーザ管理機能から初期ユーザを登録します。
 
 # 8 動作確認
 
