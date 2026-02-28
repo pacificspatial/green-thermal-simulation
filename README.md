@@ -40,31 +40,20 @@
 
 | 種別 | 名称 | バージョン | 内容 |
 | --- | --- | --- | --- |
-| オープンソースソフトウェア | [Apache HTTP Server](https://httpd.apache.org/) | 2.4.58 | Webアプリで配信を行うためのWebサーバソフトウェア |
 | オープンソースソフトウェア | [PostGIS](https://github.com/postgis/postgis) | 3.4.1 | PostgreSQLで位置情報を扱うことを可能とする拡張機能 |
 | オープンソースソフトウェア | [OpenFOAM](https://www.openfoam.com/) | v2506 | オープンソースの数値流体計算（CFD）ソフトウェア。温熱環境シミュレーションの計算エンジン |
 | オープンソースライブラリ | [CesiumJS](https://github.com/CesiumGS/cesium) | 1.136 | 3Dビューワ上にデータを描画するためのライブラリ |
-| オープンソースライブラリ | [React.js](https://github.com/facebook/react/releases) | 19.x | JavaScriptのフレームワーク内で機能するUIを構築するためのライブラリ |
-| オープンソースライブラリ | [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) | 5.x | ブラウザ上で地図を表示するためのライブラリ |
-| オープンソースライブラリ | [MUI（Material UI）](https://mui.com/) | 7.x | ReactのUIコンポーネントライブラリ |
 | オープンソースRDBMS | [PostgreSQL](https://github.com/postgres/postgres) | 16.2 | 各種配信するデータを格納するリレーショナルデータベース |
 | 商用ソフトウェア | [Cesium ion](https://cesium.com/platform/cesium-ion/) | - | 3Dデータの変換と配信のクラウドサービス |
 | クラウドサービス | [Firebase](https://firebase.google.com/) | - | 認証機能を提供するクラウドサービス |
 
 
 ## 6. 動作環境
-| 項目               | 最小動作環境                                              | 推奨動作環境 |
-| ------------------ | --------------------------------------------------------- | ------------ |
-| OS                 | Microsoft Windows 10 以上　または macOS 12 Monterey 以上 | 同左         |
-| CPU                | Pentium 4 以上                                            | 同左         |
-| メモリ             | 8GB以上                                                   | 同左         |
-
-OpenFOAM によるシミュレーション計算サーバの動作環境は以下のとおりです。
-
-| 項目 | 動作環境 |
-| --- | --- |
-| OS | Linux 64bit |
-| ソフトウェア | OpenFOAM v2506 |
+| 項目 | 最小動作環境 | 推奨動作環境 |
+| --- | --- | --- |
+| OS | Amazon Linux 2023 以上（AWS EC2） | 同左 |
+| CPU | EC2 インスタンスタイプに依存 | 同左 |
+| メモリ | EC2 インスタンスタイプに依存（4GB 以上） | 同左 |
 
 ## 7. 本リポジトリのフォルダ構成
 | フォルダ/ファイル名                | 詳細                                           |
