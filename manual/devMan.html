@@ -222,9 +222,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.html [L]
 </code></pre>
-<blockquote>
-<p><strong>注記</strong> 本システムは SPA（シングルページアプリケーション）のため、<code>/project/123</code> のような URL に直接アクセスするとサーバ側にファイルが存在せず 404 エラーになります。上記の設定により、すべてのリクエストを <code>index.html</code> に転送し、画面の描画を JavaScript 側に委ねます</p>
-</blockquote>
+<p><strong>注記</strong> 本システムは SPA（シングルページアプリケーション）のため、<code>/project/123</code> のような URL に直接アクセスするとサーバ側にファイルが存在せず 404 エラーになります。上記の設定により、すべてのリクエストを <code>index.html</code> に転送し、画面の描画を JavaScript 側で行います</p>
 <h1 id="5-openfoam-樹木モデルの構築">5 OpenFOAM 樹木モデルの構築</h1>
 <p>本システムのシミュレーション計算には、OpenFOAM 標準ソルバーに樹木モデル（<code>canopyModels_v2506</code>）を追加した環境が必要です。OpenFOAM 計算サーバ（Linux 64bit）で以下の手順を実施してください。</p>
 <p>（1）樹木モデルのコンパイル</p>
