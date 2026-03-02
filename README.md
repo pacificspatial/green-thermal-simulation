@@ -11,12 +11,18 @@
 ## 1. 概要
 本リポジトリでは、Project PLATEAUの令和7年度のユースケース開発業務の一部であるUC25-11「樹木データを活用した温熱環境シミュレータの開発」について、その成果物である「温熱環境シミュレーション機能」のソースコードを公開しています。
 
+<<<<<<< Updated upstream
 温熱環境シミュレーション機能は、3D都市モデルを活用して、対象エリアのビル壁面や地面の温度などの外力を設定し、温熱環境のシミュレーションを実行するために開発されたWebアプリケーションです。
 
 「樹木データを活用した温熱環境シミュレータの開発」では、「温熱環境シミュレーション機能」以外に３つのアプリケーションをOSSとして公開しています。樹木データは共有して利用することが可能です。
 - [樹木管理ダッシュボード]（https://github.com/Project-PLATEAU/green-dashboard）:地方公共団体や民間企業が保有する緑地関連データを一元的に管理するWebアプリケーションです。
 - [緑の評価指標算出機能](https://github.com/Project-PLATEAU/green-indicator):優良緑地確保計画認定制度（TSUNAG）との連携を想定して、緑の評価指標を算出するWebアプリケーションです。
 - [生態系ネットワーク指標値算出機能](https://github.com/Project-PLATEAU/green-econet):優良緑地確保計画認定制度（TSUNAG）の申請時に活用することを想定して、生態系ネットワーク指標値を算出するWebアプリケーションです。
+=======
+本システムは、3D都市モデルを活用した樹木管理機能及び緑の効果の定量的評価を支援する取り組みである「樹木データを活用した温熱環境シミュレータの開発」の一部として開発されたWebアプリケーションです。
+
+本システムの詳細については[技術検証レポート](https://www.mlit.go.jp/plateau/file/libraries/doc/plateau_tech_doc_0136_ver01.pdf)を参照してください。
+>>>>>>> Stashed changes
 
 ## 2. 「温熱環境シミュレーション機能」について
 植生モデルを含む3D都市モデルに対し、ビル壁面や地面の温度などの外力を設定し、対象エリアの温熱環境のシミュレーションを行い、温度、湿度、WBGT（暑さ指数）を算出する機能です。
@@ -108,4 +114,8 @@
 
 ## 10. 参考資料
 - 技術検証レポート: https://www.mlit.go.jp/plateau/file/libraries/doc/plateau_tech_doc_0136_ver01.pdf
+<<<<<<< Updated upstream
 - PLATEAU WebサイトのUse caseページ「樹木データを活用した温熱環境シミュレータの開発」: https://www.mlit.go.jp/plateau/use-case/uc25-11/
+=======
+- PLATEAU WebサイトのUse caseページ「樹木データを活用した温熱環境シミュレータの開発」: https://www.mlit.go.jp/plateau/use-case/uc25-11/
+>>>>>>> Stashed changes
