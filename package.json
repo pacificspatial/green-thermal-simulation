@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode=debug",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "postinstall": "ncp ./src/resources ./public/resources && rimraf ./src/cesium/* && ncp ./node_modules/cesium/Build/Cesium ./src/cesium && ncp ./node_modules/cesium/Build/Cesium ./public/cesium"
